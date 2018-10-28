@@ -1,0 +1,9 @@
+{
+    "name": "dangframework/dang-log",
+    "autoload": {
+        "psr-4": {
+            "Dang\\Log\\": "src/"
+        }
+    },
+    "require": {}
+}

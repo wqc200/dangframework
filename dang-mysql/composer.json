@@ -1,0 +1,9 @@
+{
+    "name": "dangframework/dang-mysql",
+    "autoload": {
+        "psr-4": {
+            "Dang\\Mysql\\": "src/"
+        }
+    },
+    "require": {}
+}
