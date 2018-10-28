@@ -27,7 +27,7 @@ class SimpleLog
         if (!is_readable($rootDir)) {
             mkdir($rootDir);
         }
-    echo "aaaa";
+
         $dir = $rootDir.$dirName;
         if (!is_readable($dir)) {
             throw new \Dang\Exception\RuntimeException(sprintf(
