@@ -8,6 +8,11 @@
             "email": "test@test.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Dang\\": "src/"
+        }
+    },
     "minimum-stability": "stable",
     "require": {}
 }
