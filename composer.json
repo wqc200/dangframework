@@ -1,13 +1,13 @@
 {
     "name": "wqc200/dangframework",
     "description": "test",
-    "license": "test",
+    "license": "BSD-3-Clause",
     "authors": [
         {
             "name": "test",
             "email": "test@test.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev-master",
     "require": {}
 }
