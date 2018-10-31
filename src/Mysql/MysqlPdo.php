@@ -5,7 +5,8 @@ namespace Dang\Mysql;
 class MysqlPdo
 {
     protected $_db;
-    protected $_debug;
+    protected $_stmt;
+    protected $_param;
 
     function __construct($dbname, $host, $port, $user, $passwd)
     {
@@ -19,42 +20,35 @@ class MysqlPdo
             ));
             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            echo 'Connection failed: ' . $e->getMessage();
+            echo 'Mysql pdo connection failed: ' . $e->getMessage();
         }
 
         $this->_db = $db;
+        $this->_stmt = new \PDOStatement();
     }
 
-    function query($sql)
+    function prepareSql($sql)
 	{
-        $PDOStatement = $this->_db->query($sql);
-
-        return $PDOStatement;
+        $this->_stmt = $this->_db->prepare($sql);
+        return $this;
 	}
 
-    function prepare($sql)
-	{
-        return $this->_db->prepare($sql);
-	}
-
-    function lastInsertId()
-	{
-        return $this->_db->lastInsertId();
-    }
-
-    function executeSql($sql)
-	{
-        $sth = $this->prepare($sql);
-        $result = $sth->execute();
-        $sth->closeCursor();
-
+    function execute()
+    {
+        $this->buildParam();
+        $result = $this->_stmt->execute();
         return $result;
     }
 
-    function executeInsert($table, $data, $action = "INSERT")
+    function closeCursor()
+    {
+        $this->_stmt->closeCursor();
+        return $this;
+    }
+
+    function prepareInsert($table, $data, $action = "INSERT")
 	{
 		reset($data);
-
         $space = $query_1 = $query_2 = '';
         foreach($data as $key=>$val)
         {
@@ -64,72 +58,99 @@ class MysqlPdo
         }
         $query = $action.' INTO `' . $table . '` ('.$query_1.') VALUES ('.$query_2.')';
 
-        $sth = $this->prepare($query);
-        $result = $sth->execute();
-        $sth->closeCursor();
-
-        return $result;
+        $this->prepareSql($query);
+        return $this;
     }
 
-    function executeUpdate($table, $data, $where = '')
+    function prepareUpdate($table, $data, $where = '')
 	{
         $query = 'UPDATE `' . $table . '` SET ';
         $space='';
         foreach($data as $key=>$val)
         {
-            $query .= $space."`".$key. "` = '" . $val. "'";
+            if($val instanceof \Dang\Mysql\Expression){
+                $query .= $space."`".$key. "` = ". $val->__toString();
+            }else{
+                $query .= $space.$key . "= '" . $val. "'";
+            }
             $space=', ';
         }
         if($where){
             $query .=' WHERE ' . $where.'';
         }
 
-        $sth = $this->prepare($query);
-        $result = $sth->execute();
-        $sth->closeCursor();
+        $this->prepareSql($query);
+        return $this;
+    }
 
+    function doUpdate()
+    {
+        $result = $this->execute();
+        $this->closeCursor();
         return $result;
     }
 
-	function getOne($sql)
-	{
-        $sth = $this->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetchColumn();
-
-		return $result;
-	}
-
-	function getRow($sql)
-	{
-		$PDOStatement = $this->query($sql);
-		$result = $PDOStatement->fetch(\PDO::FETCH_ASSOC);
-
-		return $result;
-	}
-
-    function getAll($sql)
-	{
-        $sth = $this->prepare($sql);
-        $sth->setFetchMode(\PDO::FETCH_ASSOC);
-        $sth->execute();
-        $result = $sth->fetchAll();
-
-		return $result;
-	}
-
-    function getInsertId()
+    function doInsert()
     {
-        return $this->lastInsertId();
+        return $this->doUpdate();
     }
 
-    function close()
+	function getOne()
+	{
+        $this->execute();
+        $result = $this->_stmt->fetchColumn();
+		return $result;
+	}
+
+	function getRow()
+	{
+        $this->_stmt->setFetchMode(\PDO::FETCH_ASSOC);
+        $this->execute();
+		$result = $this->_stmt->fetch();
+		return $result;
+	}
+
+    function getRowList()
+	{
+        $this->_stmt->setFetchMode(\PDO::FETCH_ASSOC);
+        $this->execute();
+        $result = $this->_stmt->fetchAll();
+		return $result;
+	}
+
+    function getLastInsertId()
+    {
+        $result = $this->_db->lastInsertId();
+        return $result;
+    }
+
+    function closeDb()
     {
         $this->_db = null;
     }
 
-    function debug($debug)
+    function bindParam($param)
     {
-        $this->_debug = $debug;
+        $this->_param = $param;
+        return $this;
+    }
+
+    function buildParam()
+    {
+        if(isset($this->_param[0])){
+            for($i=0;$i<count($this->_param);$i++){
+                $paramVal = &$this->_param[$i];
+                $this->_stmt->bindparam($i + 1, $paramVal);
+            }
+            return;
+        }
+
+        if(!is_array($this->_param)){
+            return;
+        }
+        foreach($this->_param as $paramKey => &$paramVal){
+            $this->_stmt->bindparam($paramKey, $paramVal);
+        }
+        return;
     }
 }

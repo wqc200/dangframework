@@ -23,17 +23,14 @@ class SimpleLog
     
     public function __construct($dirName)
     {
-        $rootDir = "./log/";
+        $rootDir = ltrim(LOG_DIR."/")."/";
         if (!is_readable($rootDir)) {
-            mkdir($rootDir);
+            mkdir($rootDir, 0777);
         }
 
         $dir = $rootDir.$dirName;
         if (!is_readable($dir)) {
-            throw new \Dang\Exception\RuntimeException(sprintf(
-                "Dir '%s' not readable",
-                $dir
-            ));
+            mkdir($dir, 0777);
         }
     
         $today = date("Y-m-d");
