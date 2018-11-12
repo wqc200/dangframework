@@ -58,6 +58,10 @@ class SimpleLog
     
     public function write($type, $content)
     {
+        if(!is_string($content)){
+            $content = var_export($content, true);
+        }
+
         $content = '['.date("Y-m-d H:i:s").']['.$type.'] '.$content;
         if($this->_addTrace){
             $content .= "\n".$this->get_debug_backtrace();
