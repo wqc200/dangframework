@@ -23,7 +23,7 @@ class SimpleLog
     
     public function __construct($dirName)
     {
-        $rootDir = ltrim(LOG_DIR."/")."/";
+        $rootDir = rtrim(LOG_DIR."/")."/";
         if (!is_readable($rootDir)) {
             mkdir($rootDir, 0777);
         }
