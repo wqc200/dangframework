@@ -48,11 +48,9 @@ class Val
 
     public function hasVal($name)
     {
-        if (isset($this->_vars[$name])){
+        if (isset($this->_vars[$name])) {
             return true;
         }
         return false;
     }
 }
-
-
