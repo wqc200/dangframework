@@ -42,15 +42,13 @@ class Enter
         for ($i = 0; $i < 10; $i++) {
             $break = true;
 
-            $classer = "Controller_" . $this->moduleName . "_" . $this->controllerName;
+            $classer = "\Controller\\" . $this->moduleName . "\\" . $this->controllerName;
             //实例化控制器
             $controller = new $classer();
-            //执行 $method 方法之前所需要进行的操作，如“打开数据库连接”
-            $controller->preDispatch();
-            //执行 $method 方法
-            $result = $controller->onDispatch();
-            //执行 $method 方法之后所需要进行的操作，如“关闭数据库连接”
-            $controller->postDispatch();
+            if (!method_exists($controller, $this->actionName)) {
+                exit('notFoundAction');
+            }
+            $controller->$this->actionName();
 
             //检查mvc参数是否被重写
             if ($this->moduleName != \Dang\Mvc\Param::instance()->getModule()) {
@@ -69,76 +67,6 @@ class Enter
             if ($break == true) {
                 break;
             }
-        }
-
-        //根据返回的model对象的类型，决定使用什么样的输出方法
-        if ($result instanceof Dang_Mvc_View_Model_XmlModel) {
-            $actionModel = $result;
-
-            $filename = Dang_Mvc_Template::instance()->setExtension("pxml")->getActionFilename();
-            $actionModel->setTemplate($filename);
-
-            /*
-        $module = Dang_Mvc_Template::instance()->getModule();
-        $controller = Dang_Mvc_Template::instance()->getController();
-        $action = Dang_Mvc_Template::instance()->getAction();
-        Dang_Mvc_Template::instance()->setExtension("pxml");
-
-        //获取method里的html代码
-        $viewXmlModel = $result;
-        $path = "./tpl/".$module."/".$controller;
-        $viewXmlModel->setTemplatePath($path);
-        $viewXmlModel->setTemplateName($action);
-        */
-
-            $phpRenderer = new Dang_Mvc_PhpRenderer();
-            $content = $phpRenderer->renderModel($actionModel);
-
-            header("content-type: application/xml; charset=UTF-8");
-            echo '<?xml version="1.0" encoding="UTF-8"?>';
-            echo $content;
-
-        } elseif ($result instanceof Dang_Mvc_View_Model_TxtModel) {
-            $txtModel = $result;
-            $filename = Dang_Mvc_Template::instance()->setExtension("ptxt")->getActionFilename();
-            $txtModel->setTemplate($filename);
-            $phpRenderer = new Dang_Mvc_PhpRenderer();
-            $content = $phpRenderer->renderModel($txtModel);
-            echo $content;
-
-        } elseif ($result instanceof Dang_Mvc_View_Model_JsonModel) {
-            $callback = \Dang\Mvc\Request::instance()->getParam("callback");
-            if ($callback) {
-                echo $callback . "(" . json_encode($result->getVariables()) . ")";
-            } else {
-                echo json_encode($result->getVariables());
-            }
-
-        } elseif ($result instanceof Dang_Mvc_View_Model_JsonpModel) {
-            echo "jsonpCallback(" . json_encode($result->getVariables()) . ")";
-
-        } elseif ($result instanceof Dang_Mvc_View_Model_HtmlModel) {
-            $actionModel = $result;
-
-            $filename = Dang_Mvc_Template::instance()->getActionFilename();
-            $actionModel->setTemplate($filename);
-            $actionModel->setCaptureTo('content');
-
-            $layoutModel = Dang_Mvc_ServiceManager::instance()->get("layoutModel");
-            $filename = Dang_Mvc_Template::instance()->getLayoutFilename();
-            $layoutModel->setTemplate($filename);
-            $layoutModel->addChild($actionModel, 'content');
-            $view = new Dang_Mvc_View_View();
-            $content = $view->render($layoutModel);
-
-            echo $content;
-
-        } elseif ($result instanceof Dang_Mvc_View_Model_NoneModel) {
-            //do nothing
-
-        } else {
-            echo "\n Error: no model \n";
-
         }
     }
 }
