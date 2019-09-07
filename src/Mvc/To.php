@@ -45,7 +45,7 @@ class To
     public function setModule($name)
     {
         if ($name == null) {
-            return $this;
+            throw new \Exception("Module not found!");
         }
 
         $name = \Dang\Mvc\Util::paramUrlToMvc($name);
@@ -62,7 +62,7 @@ class To
     public function setController($name)
     {
         if ($name == null) {
-            return $this;
+            throw new \Exception("Controller not found!");
         }
 
         $name = \Dang\Mvc\Util::paramUrlToMvc($name);
@@ -79,7 +79,7 @@ class To
     public function setAction($name)
     {
         if ($name == null) {
-            return $this;
+            throw new \Exception("Action not found!");
         }
 
         $name = \Dang\Mvc\Util::paramUrlToMvc($name);
