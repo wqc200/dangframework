@@ -8,7 +8,7 @@ class Enter
     {
     }
 
-    public function init()
+    public function initTo()
     {
         $module = \Dang\Mvc\Request::instance()->getParamQuery("module");
         \Dang\Mvc\To::instance()->setModule($module);
