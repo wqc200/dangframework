@@ -1,8 +1,8 @@
 <?php
 
-namespace Dang\Helper;
+namespace Dang\Logic;
 
-class PlaceHolder
+class Holder
 {
     private $_items;
 
@@ -14,11 +14,13 @@ class PlaceHolder
     public function append($content)
     {
         $this->_items[] = $content;
+        return $this;
     }
 
     public function prepend($content)
     {
         array_unshift($this->_items, $content);
+        return $this;
     }
 
     public function __toString()

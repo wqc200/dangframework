@@ -1,6 +1,6 @@
 <?php
 
-namespace Dang;
+namespace Dang\Logic;
 
 class Val
 {

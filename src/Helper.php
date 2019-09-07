@@ -4,7 +4,7 @@ namespace Dang;
 
 class Helper
 {
-    private static $_placeHolderNames = array();
+    private static $_holderNames = array();
 
     public static function isDevice($device)
     {
@@ -18,20 +18,30 @@ class Helper
 
     public static function serverUrl($requestUri = null)
     {
-        $serverUrl = new \Dang\Helper\ServerUrl();
+        $serverUrl = new \Dang\Logic\ServerUrl();
         return $serverUrl->get($requestUri);
     }
 
-    public static function placeHolder($name):\Dang\Helper\PlaceHolder
+    public static function holder($name):\Dang\Logic\Holder
     {
-        if (!isset(self::$_placeHolderNames[$name])) {
-            self::$_placeHolderNames[$name] = new \Dang\Helper\PlaceHolder();
+        if (!isset(self::$_holderNames[$name])) {
+            self::$_holderNames[$name] = new \Dang\Logic\Holder();
         }
-        return self::$_placeHolderNames[$name];
+        return self::$_holderNames[$name];
     }
 
     public static function tpl()
     {
-        return \Dang\Helper\Tpl::instance();
+        return \Dang\Logic\Tpl::instance();
+    }
+
+    public static function log($dirName)
+    {
+        return \Dang\Logic\Log::instance($dirName);
+    }
+
+    public static function val()
+    {
+        return \Dang\Logic\Val::instance();
     }
 }

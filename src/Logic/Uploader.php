@@ -13,7 +13,7 @@ $filename = $uploader->getFilename();
  * 
  */
 
-namespace Dang\Util;
+namespace Dang\Logic;
 
 class Uploader 
 {

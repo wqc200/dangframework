@@ -1,6 +1,6 @@
 <?php
 
-namespace Dang\Helper;
+namespace Dang\Logic;
 
 class Tpl
 {
@@ -60,6 +60,6 @@ class Tpl
             throw new Exception("tpl file: " . $filename . " not found!");
         }
 
-        include $file;
+        include $filename;
     }
 }

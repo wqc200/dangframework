@@ -5,10 +5,8 @@ namespace Dang\Mvc;
 class Param
 {
     protected static $_instance = null;
-
-    protected $_route;
+    
     protected $_module;
-    protected $_device;
     protected $_controller;
     protected $_action;
 
@@ -24,17 +22,6 @@ class Param
         return self::$_instance;
     }
 
-    public function getRoute()
-    {
-        return $this->_route;
-    }
-
-    public function setRoute($name)
-    {
-        $this->_route = $name;
-        return $this;
-    }
-
     public function getModule()
     {
         return $this->_module;
@@ -43,17 +30,6 @@ class Param
     public function setModule($name)
     {
         $this->_module = $name;
-        return $this;
-    }
-
-    public function getDevice()
-    {
-        return $this->_device;
-    }
-
-    public function setDevice($name)
-    {
-        $this->_device = $name;
         return $this;
     }
 

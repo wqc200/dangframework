@@ -4,25 +4,12 @@ namespace Dang\Mvc;
 
 class Enter
 {
-    /*
-     * 构造入口
-     */
     function __construct()
     {
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $request_url = $_SERVER['REQUEST_URI'];
-            $router = new \Dang\Mvc\Router();
-            $route = $router->fromUrl($request_url);
-            \Dang\Mvc\Param::instance()->setRoute($route);
-        }
-
         $module = \Dang\Mvc\Request::instance()->getParamGet("module", "www");
         $module = \Dang\Mvc\Util::paramUrlToMvc($module);
         $this->moduleName = ucfirst($module);
         \Dang\Mvc\Param::instance()->setModule($this->moduleName);
-
-        $device = \Dang\Mvc\Util::paramUrlToMvc($device);
-        \Dang\Mvc\Param::instance()->setDevice($device);
 
         $controller = \Dang\Mvc\Request::instance()->getParamGet("controller", "index");
         $controller = \Dang\Mvc\Util::paramUrlToMvc($controller);
@@ -35,7 +22,6 @@ class Enter
         \Dang\Mvc\Param::instance()->setAction($this->actionName);
     }
 
-    //执行器
     public function run()
     {
         //用于forward，最多forward2次，避免进入死循环

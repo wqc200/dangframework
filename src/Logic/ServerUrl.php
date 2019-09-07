@@ -1,6 +1,6 @@
 <?php
 
-namespace Dang\Helper;
+namespace Dang\Logic;
 
 class ServerUrl
 {

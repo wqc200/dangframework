@@ -4,12 +4,10 @@ namespace Dang\Mvc;
 
 class Request
 {
-    protected static $_instance = null;
-
+    private static $_instance = null;
     private $_post = array();  //post里的参数
     private $_get = array();  //命令行下/和url里get里的参数都放在这里
-
-    public $isConsole = 0;  //是否命令行，1是命令行,0非命令行
+    private $_isConsole = 0;  //是否命令行，1是命令行,0非命令行
 
     /*
      * 单例模式入口
@@ -43,9 +41,9 @@ class Request
             $argv = array();
         }
         if (count($argv)>0){
-            $this->isConsole = 1;
+            $this->_isConsole = 1;
         }
-        if($this->isConsole == 1){
+        if($this->_isConsole == 1){
             array_shift($argv);
             $queryString = join("&", $argv);
             parse_str($queryString, $_ddargv);
@@ -125,7 +123,7 @@ class Request
             return $this->_get[$name];
         }
 
-        if($this->isConsole == 1){
+        if($this->_isConsole == 1){
             return $default;
         }
 
@@ -152,7 +150,7 @@ class Request
         foreach ($defaultValues as $key => $value)
         {
             //url请求模式
-            if($this->isConsole == 0){
+            if($this->_isConsole == 0){
                 if(isset($this->_post[$key])){
                     continue;
                 }
@@ -172,7 +170,7 @@ class Request
      */
     public function setParam($name, $value)
     {
-        if($this->isConsole == 0){
+        if($this->_isConsole == 0){
             if(isset($this->_post[$name])){
                 $this->_post[$name] = $value;
                 return $this;
@@ -191,4 +189,3 @@ class Request
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
     }
 }
-?>

@@ -1,8 +1,8 @@
 <?php
 
-namespace Dang\Log;
+namespace Dang\Logic;
 
-class SimpleLog
+class Log
 {
     public static $_instance;
     

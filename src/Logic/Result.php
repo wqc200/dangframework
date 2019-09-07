@@ -1,6 +1,6 @@
 <?php
 
-namespace Dang\Util;
+namespace Dang\Logic;
 
 
 class Result

@@ -1,13 +1,5 @@
 <?php
 
-/*
- * 基本路由
- * 提供对形如 http://www.site.com/www/test/test/?param=value 的url的创建和解析
- * @author wuqingcheng
- * @date 2013.05.28
- * @email wqc200@gmail.com
- */
-
 namespace Dang\Mvc\Router;
 
 class Base implements RouterInterface
@@ -44,7 +36,7 @@ class Base implements RouterInterface
         $controller = \Dang\Mvc\Util::paramMvcToUrl($controller);
         $action = \Dang\Mvc\Util::paramMvcToUrl($action);
 
-        $serverUrl = \Dang_Mvc_View_Helper::instance()->serverUrl();
+        $serverUrl = \Dang\Helper::serverUrl();
 
         $url = $serverUrl."/".$module."/".$controller."/".$action;
         $str = \Dang\Mvc\Util::appendParams($query);
@@ -54,16 +46,15 @@ class Base implements RouterInterface
         return $url;
     }
 
-    public function fromUrl($url)
+    public function fromUrl($url):bool
     {
-        $request_url = $url;
         if(preg_match("/^\/(index.php)?$/si", $url, $match)){
             \Dang\Mvc\Request::instance()->setParamGet("module", "www");
             \Dang\Mvc\Request::instance()->setParamGet("controller", "index");
             \Dang\Mvc\Request::instance()->setParamGet("action", "index");
 
             return true;
-        }elseif(preg_match("/^\/([a-z0-9-_]+)\/([a-z0-9-_]+)\/([a-z0-9-_]+)[\/]?[\?]?/si", $request_url, $match)){
+        }elseif(preg_match("/^\/([a-z0-9-_]+)\/([a-z0-9-_]+)\/([a-z0-9-_]+)[\/]?[\?]?/si", $url, $match)){
             $module = $match['1'];
             $controller = $match['2'];
             $action = $match['3'];
@@ -74,5 +65,7 @@ class Base implements RouterInterface
 
             return true;
         }
+
+        return false;
     }
 }
