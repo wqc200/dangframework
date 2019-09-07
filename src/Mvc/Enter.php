@@ -6,53 +6,43 @@ class Enter
 {
     function __construct()
     {
-        $module = \Dang\Mvc\Request::instance()->getParamGet("module", "www");
-        $module = \Dang\Mvc\Util::paramUrlToMvc($module);
-        $this->moduleName = ucfirst($module);
-        \Dang\Mvc\Param::instance()->setModule($this->moduleName);
-
-        $controller = \Dang\Mvc\Request::instance()->getParamGet("controller", "index");
-        $controller = \Dang\Mvc\Util::paramUrlToMvc($controller);
-        $this->controllerName = ucfirst($controller);
-        \Dang\Mvc\Param::instance()->setController($this->controllerName);
-
-        $action = \Dang\Mvc\Request::instance()->getParamGet("action", "index");
-        $action = \Dang\Mvc\Util::paramUrlToMvc($action);
-        $this->actionName = ucfirst($action);
-        \Dang\Mvc\Param::instance()->setAction($this->actionName);
     }
 
-    public function run()
+    public function init()
     {
-        //用于forward，最多forward2次，避免进入死循环
-        for ($i = 0; $i < 10; $i++) {
-            $break = true;
+        $module = \Dang\Mvc\Request::instance()->getParamQuery("module");
+        \Dang\Mvc\To::instance()->setModule($module);
 
-            $classer = "\Controller\\" . $this->moduleName . "\\" . $this->controllerName;
-            //实例化控制器
-            $controller = new $classer();
-            if (!method_exists($controller, $this->actionName)) {
-                exit('notFoundAction');
-            }
-            $controller->$this->actionName();
+        $controller = \Dang\Mvc\Request::instance()->getParamQuery("controller");
+        \Dang\Mvc\To::instance()->setController($controller);
 
-            //检查mvc参数是否被重写
-            if ($this->moduleName != \Dang\Mvc\Param::instance()->getModule()) {
-                $break = false;
-                $this->moduleName = \Dang\Mvc\Param::instance()->getModule();
-            }
-            if ($this->controllerName != \Dang\Mvc\Param::instance()->getController()) {
-                $break = false;
-                $this->controllerName = \Dang\Mvc\Param::instance()->getController();
-            }
-            if ($this->actionName != \Dang\Mvc\Param::instance()->getAction()) {
-                $break = false;
-                $this->actionName = \Dang\Mvc\Param::instance()->getAction();
-            }
+        $action = \Dang\Mvc\Request::instance()->getParamQuery("action");
+        \Dang\Mvc\To::instance()->setAction($action);
+    }
 
-            if ($break == true) {
+    public function run($maxForword = 10)
+    {
+        while(true) {
+            $isForword = \Dang\Mvc\To::instance()->isForword();
+            if (!$isForword) {
                 break;
             }
+
+            $forwordTotal = \Dang\Mvc\To::instance()->forwordTotal();
+            if ($forwordTotal > $maxForword) {
+                break;
+            }
+
+            $module = \Dang\Mvc\To::instance()->getModule();
+            $controller = \Dang\Mvc\To::instance()->getController();
+            $action = \Dang\Mvc\To::instance()->getAction();
+
+            $classer = "\Controller\\" . $module . "\\" . $controller;
+            $controller = new $classer();
+            if (!method_exists($controller, $action)) {
+                throw new \Exception("Action: " . $action . " not found!");
+            }
+            $controller->$action();
         }
     }
 }

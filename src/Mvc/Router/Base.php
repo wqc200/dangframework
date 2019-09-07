@@ -14,9 +14,9 @@ class Base implements RouterInterface
             $param = (array) $param;
         }
 
-        $module = \Dang\Mvc\Param::instance()->getModule();
-        $controller = \Dang\Mvc\Param::instance()->getController();
-        $action = \Dang\Mvc\Param::instance()->getAction();
+        $module = \Dang\Mvc\Router::instance()->getModule();
+        $controller = \Dang\Mvc\Router::instance()->getController();
+        $action = \Dang\Mvc\Router::instance()->getAction();
 
         $query = $param;
         if(isset($param['module'])){
@@ -49,9 +49,9 @@ class Base implements RouterInterface
     public function fromUrl($url):bool
     {
         if(preg_match("/^\/(index.php)?$/si", $url, $match)){
-            \Dang\Mvc\Request::instance()->setParamGet("module", "www");
-            \Dang\Mvc\Request::instance()->setParamGet("controller", "index");
-            \Dang\Mvc\Request::instance()->setParamGet("action", "index");
+            \Dang\Mvc\Request::instance()->setParamQuery("module", "www");
+            \Dang\Mvc\Request::instance()->setParamQuery("controller", "main");
+            \Dang\Mvc\Request::instance()->setParamQuery("action", "index");
 
             return true;
         }elseif(preg_match("/^\/([a-z0-9-_]+)\/([a-z0-9-_]+)\/([a-z0-9-_]+)[\/]?[\?]?/si", $url, $match)){
@@ -59,9 +59,9 @@ class Base implements RouterInterface
             $controller = $match['2'];
             $action = $match['3'];
 
-            \Dang\Mvc\Request::instance()->setParamGet("module", $module);
-            \Dang\Mvc\Request::instance()->setParamGet("controller", $controller);
-            \Dang\Mvc\Request::instance()->setParamGet("action", $action);
+            \Dang\Mvc\Request::instance()->setParamQuery("module", $module);
+            \Dang\Mvc\Request::instance()->setParamQuery("controller", $controller);
+            \Dang\Mvc\Request::instance()->setParamQuery("action", $action);
 
             return true;
         }

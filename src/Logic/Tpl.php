@@ -57,7 +57,7 @@ class Tpl
     {
         $filename = (string)$this->getPath() . "/" . $file . "." . $this->getExtension();
         if (!file_exists($filename)) {
-            throw new Exception("tpl file: " . $filename . " not found!");
+            throw new \Exception("tpl file: " . $filename . " not found!");
         }
 
         include $filename;

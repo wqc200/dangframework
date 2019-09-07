@@ -14,7 +14,7 @@ class Request
      */
     public static function instance()
     {
-        if(self::$_instance == null){
+        if (self::$_instance == null) {
             self::$_instance = new self();
         }
 
@@ -34,21 +34,21 @@ class Request
         $_ddargv = array();
 
         $argv = array();
-        if(isset($_SERVER['argv'])){
+        if (isset($_SERVER['argv'])) {
             $argv = $_SERVER['argv'];
         }
-        if(!is_array($argv)){
+        if (!is_array($argv)) {
             $argv = array();
         }
-        if (count($argv)>0){
+        if (count($argv) > 0) {
             $this->_isConsole = 1;
         }
-        if($this->_isConsole == 1){
+        if ($this->_isConsole == 1) {
             array_shift($argv);
             $queryString = join("&", $argv);
             parse_str($queryString, $_ddargv);
             $this->_get = $_ddargv;
-        }else{
+        } else {
             $this->_get = $_GET;
         }
         $this->_post = $_POST;
@@ -57,9 +57,9 @@ class Request
     /*
      * 获取post参数，如果没有设置，则返回默认值
      */
-    public function getParamPost($name, $default=null)
+    public function getParamPost($name, $default = null)
     {
-        if(isset($this->_post[$name])){
+        if (isset($this->_post[$name])) {
             return $this->_post[$name];
         }
 
@@ -81,7 +81,7 @@ class Request
      */
     public function issetParamPost($name)
     {
-        if(isset($this->_post[$name])){
+        if (isset($this->_post[$name])) {
             return true;
         }
 
@@ -92,23 +92,23 @@ class Request
      * 命令行下参数：first=value&arr[]=foo+bar&arr[]=baz
      * 由于命令行下的参数传递和url里的一样，所以将命令行下的参数也归入get里
      */
-    public function getParamGet($name, $default=null)
+    public function getParamQuery($name, $default = null)
     {
-        if(isset($this->_get[$name])){
+        if (isset($this->_get[$name])) {
             return $this->_get[$name];
         }
 
         return $default;
     }
 
-    public function getParamsGet()
+    public function getParamQueries()
     {
         return $this->_get;
     }
 
     /*
      */
-    public function setParamGet($name, $value)
+    public function setParamQuery($name, $value)
     {
         $this->_get[$name] = $value;
         return $this;
@@ -117,17 +117,17 @@ class Request
     /*
      * 获取参数, 依次获取 get post里的值，如果没有找到则返回默认值
      */
-    public function getParam($name, $default=null)
+    public function getParam($name, $default = null)
     {
-        if(isset($this->_get[$name])){
+        if (isset($this->_get[$name])) {
             return $this->_get[$name];
         }
 
-        if($this->_isConsole == 1){
+        if ($this->_isConsole == 1) {
             return $default;
         }
 
-        if(isset($this->_post[$name])){
+        if (isset($this->_post[$name])) {
             return $this->_post[$name];
         }
 
@@ -135,43 +135,11 @@ class Request
     }
 
     /*
-     * xss攻击，放在最终render 模板的时候进行，程序运行期间，处理的都是最原始的数据
-     * sql攻击，放在最终执行sql语句的时候进行，程序运行期间，处理的都是最原始的数据
-     * 所以这里没有对原始数据做任何处理
-     * 只有当键值不存在 !isset()的时候，才对key付值,且都放在$this->_get里
-     */
-    public function setParamDefault(array $defaultValues)
-    {
-        //如果参数不是数组，什么都不做
-        if(!is_array($defaultValues)){
-            return $this;
-        }
-
-        foreach ($defaultValues as $key => $value)
-        {
-            //url请求模式
-            if($this->_isConsole == 0){
-                if(isset($this->_post[$key])){
-                    continue;
-                }
-            }
-
-            if(isset($this->_get[$key])){
-                continue;
-            }
-
-            $this->setParamGet($key, $value);
-        }
-
-        return $this;
-    }
-
-    /*
      */
     public function setParam($name, $value)
     {
-        if($this->_isConsole == 0){
-            if(isset($this->_post[$name])){
+        if ($this->_isConsole == 0) {
+            if (isset($this->_post[$name])) {
                 $this->_post[$name] = $value;
                 return $this;
             }
