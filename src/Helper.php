@@ -16,6 +16,26 @@ class Helper
         return false;
     }
 
+    public static function isMobile()
+    {
+        $mobileDetect = new \Detection\MobileDetect();
+        if($mobileDetect->isMobile()){
+            return true;
+        }
+
+        return false;
+    }
+
+    public static function isTablet()
+    {
+        $mobileDetect = new \Detection\MobileDetect();
+        if($mobileDetect->isTablet()){
+            return true;
+        }
+
+        return false;
+    }
+
     public static function serverUrl($requestUri = null)
     {
         $serverUrl = new \Dang\Logic\ServerUrl();

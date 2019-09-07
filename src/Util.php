@@ -2,7 +2,7 @@
 
 namespace Dang;
 
-class Utility
+class Util
 {
     public static function toXml($variable)
     {
