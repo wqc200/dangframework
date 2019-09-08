@@ -36,7 +36,7 @@ class Base implements RouterInterface
         $controller = \Dang\Mvc\Util::paramMvcToUrl($controller);
         $action = \Dang\Mvc\Util::paramMvcToUrl($action);
 
-        $serverUrl = \Dang\Helper::serverUrl();
+        $serverUrl = \Dang\Helper::url()->getPreUrl();
 
         $url = $serverUrl."/".$module."/".$controller."/".$action;
         $str = \Dang\Mvc\Util::appendParams($query);

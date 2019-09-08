@@ -18,7 +18,7 @@ class Main implements RouterInterface
         unset($param['controller']);
         unset($param['action']);
 
-        $serverUrl = \Dang\Helper::serverUrl();
+        $serverUrl = \Dang\Helper::url()->getPreUrl();
 
         $str = \Dang\Mvc\Util::appendParams($param);
         if($str){

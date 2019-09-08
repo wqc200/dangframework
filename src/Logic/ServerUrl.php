@@ -78,17 +78,15 @@ class ServerUrl
      *                                     is to not append any path.
      * @return string                      server url
      */
-    public function get($requestUri = null)
+    public function getAllUrl()
     {
-        if ($requestUri === true) {
-            $path = $_SERVER['REQUEST_URI'];
-        } elseif (is_string($requestUri)) {
-            $path = $requestUri;
-        } else {
-            $path = '';
-        }
-
+        $path = $_SERVER['REQUEST_URI'];
         return $this->getScheme() . '://' . $this->getHost() . $path;
+    }
+
+    public function getPreUrl()
+    {
+        return $this->getScheme() . '://' . $this->getHost();
     }
 
     /**

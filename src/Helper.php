@@ -36,10 +36,9 @@ class Helper
         return false;
     }
 
-    public static function serverUrl($requestUri = null)
+    public static function url()
     {
-        $serverUrl = new \Dang\Logic\ServerUrl();
-        return $serverUrl->get($requestUri);
+        return \Dang\Logic\ServerUrl::instance();
     }
 
     public static function holder($name):\Dang\Logic\Holder
