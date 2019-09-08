@@ -41,7 +41,7 @@ class Log
         }
     
         if (!is_readable($filename)) {
-            throw new \Dang\Exception\RuntimeException(sprintf(
+            throw new \Exception(sprintf(
                 "File '%s' not readable",
                 $filename
             ));

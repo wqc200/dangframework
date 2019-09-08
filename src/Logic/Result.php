@@ -13,7 +13,7 @@ class Result
     {
     }
 
-    function setErrorCode($errorCode){
+    function setErrorCode($errorCode = 0){
         $this->_errorCode = $errorCode;
     }
 
@@ -21,7 +21,7 @@ class Result
         return $this->_errorCode;
     }
 
-    function setMessage($message){
+    function setMessage($message = null){
         $this->_message = $message;
     }
 
