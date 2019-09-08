@@ -48,13 +48,7 @@ class Base implements RouterInterface
 
     public function fromUrl($url):bool
     {
-        if(preg_match("/^\/(index.php)?$/si", $url, $match)){
-            \Dang\Mvc\Request::instance()->setParamQuery("module", "www");
-            \Dang\Mvc\Request::instance()->setParamQuery("controller", "main");
-            \Dang\Mvc\Request::instance()->setParamQuery("action", "index");
-
-            return true;
-        }elseif(preg_match("/^\/([a-z0-9-_]+)\/([a-z0-9-_]+)\/([a-z0-9-_]+)[\/]?[\?]?/si", $url, $match)){
+        if(preg_match("/^\/([a-z0-9-_]+)\/([a-z0-9-_]+)\/([a-z0-9-_]+)[\/]?[\?]?/si", $url, $match)){
             $module = $match['1'];
             $controller = $match['2'];
             $action = $match['3'];

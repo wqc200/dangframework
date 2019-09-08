@@ -40,7 +40,7 @@ class Enter
             $classer = "\Controller\\" . $module . "\\" . $controller;
             $controller = new $classer();
             if (!method_exists($controller, $action)) {
-                throw new \Exception("Action: " . $action . " not found!");
+                throw new \Exception("Action: " . $action . " not found in class " . $classer . "");
             }
             $controller->$action();
         }

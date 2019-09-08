@@ -57,13 +57,13 @@ class Request
     /*
      * 获取post参数，如果没有设置，则返回默认值
      */
-    public function getParamPost($name, $default = null)
+    public function getParamPost($name)
     {
         if (isset($this->_post[$name])) {
             return $this->_post[$name];
         }
 
-        return $default;
+        return null;
     }
 
     /*
@@ -90,15 +90,15 @@ class Request
 
     /*
      * 命令行下参数：first=value&arr[]=foo+bar&arr[]=baz
-     * 由于命令行下的参数传递和url里的一样，所以将命令行下的参数也归入get里
+     * 由于命令行下的参数传递和url query里的一样，所以将命令行下的参数也归入get里
      */
-    public function getParamQuery($name, $default = null)
+    public function getParamQuery($name)
     {
         if (isset($this->_get[$name])) {
             return $this->_get[$name];
         }
 
-        return $default;
+        return null;
     }
 
     public function getParamQueries()
