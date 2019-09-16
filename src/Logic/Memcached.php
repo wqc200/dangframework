@@ -4,7 +4,7 @@ namespace Dang\Logic;
 
 use Memcached as MemcachedResource;
 
-class Dmemcached
+class Memcached
 {
     protected $_memcached;
 
