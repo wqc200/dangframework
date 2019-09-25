@@ -35,8 +35,7 @@ class MysqlPdo
 
     function execute()
     {
-        $this->buildParam();
-        $result = $this->_stmt->execute();
+        $result = $this->_stmt->execute($this->_param);
         return $result;
     }
 
@@ -133,24 +132,5 @@ class MysqlPdo
     {
         $this->_param = $param;
         return $this;
-    }
-
-    function buildParam()
-    {
-        if(isset($this->_param[0])){
-            for($i=0;$i<count($this->_param);$i++){
-                $paramVal = &$this->_param[$i];
-                $this->_stmt->bindparam($i + 1, $paramVal);
-            }
-            return;
-        }
-
-        if(!is_array($this->_param)){
-            return;
-        }
-        foreach($this->_param as $paramKey => &$paramVal){
-            $this->_stmt->bindparam($paramKey, $paramVal);
-        }
-        return;
     }
 }

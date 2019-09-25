@@ -105,4 +105,9 @@ class Log
     {
         $this->write("warn", $content);
     }
+
+    public function error($content)
+    {
+        $this->write("error", $content);
+    }
 }

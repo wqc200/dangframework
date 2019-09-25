@@ -14,9 +14,9 @@ class Base implements RouterInterface
             $param = (array) $param;
         }
 
-        $module = \Dang\Mvc\Router::instance()->getModule();
-        $controller = \Dang\Mvc\Router::instance()->getController();
-        $action = \Dang\Mvc\Router::instance()->getAction();
+        $module = \Dang\Mvc\To::instance()->getModule();
+        $controller = \Dang\Mvc\To::instance()->getController();
+        $action = \Dang\Mvc\To::instance()->getAction();
 
         $query = $param;
         if(isset($param['module'])){
@@ -36,7 +36,7 @@ class Base implements RouterInterface
         $controller = \Dang\Mvc\Util::paramMvcToUrl($controller);
         $action = \Dang\Mvc\Util::paramMvcToUrl($action);
 
-        $serverUrl = \Dang\Helper::url()->getPreUrl();
+        $serverUrl = \Dang\Helper::serverUrl()->getPreUrl();
 
         $url = $serverUrl."/".$module."/".$controller."/".$action;
         $str = \Dang\Mvc\Util::appendParams($query);
@@ -53,9 +53,9 @@ class Base implements RouterInterface
             $controller = $match['2'];
             $action = $match['3'];
 
-            \Dang\Mvc\Request::instance()->setParamQuery("module", $module);
-            \Dang\Mvc\Request::instance()->setParamQuery("controller", $controller);
-            \Dang\Mvc\Request::instance()->setParamQuery("action", $action);
+            \Dang\Mvc\Request::instance()->setQuery("module", $module);
+            \Dang\Mvc\Request::instance()->setQuery("controller", $controller);
+            \Dang\Mvc\Request::instance()->setQuery("action", $action);
 
             return true;
         }

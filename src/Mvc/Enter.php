@@ -6,23 +6,38 @@ class Enter
 {
     function __construct()
     {
-    }
+        \Dang\Helper::routeIterator()->addRouter("dang_main", new \Dang\Mvc\Router\Main());
+        \Dang\Helper::routeIterator()->addRouter("dang_base", new \Dang\Mvc\Router\Base());
 
-    public function initTo()
-    {
-        $module = \Dang\Mvc\Request::instance()->getParamQuery("module");
+        if (PHP_SAPI != 'cli') {
+            $this->_parseUrl();
+        }
+
+        $module = \Dang\Mvc\Request::instance()->getQuery("module");
         \Dang\Mvc\To::instance()->setModule($module);
 
-        $controller = \Dang\Mvc\Request::instance()->getParamQuery("controller");
+        $controller = \Dang\Mvc\Request::instance()->getQuery("controller");
         \Dang\Mvc\To::instance()->setController($controller);
 
-        $action = \Dang\Mvc\Request::instance()->getParamQuery("action");
+        $action = \Dang\Mvc\Request::instance()->getQuery("action");
         \Dang\Mvc\To::instance()->setAction($action);
+    }
+
+    public function _parseUrl()
+    {
+        $requestUrl = $_SERVER['REQUEST_URI'];
+        $routerIterator = \Dang\Helper::RouteIterator();
+        foreach ($routerIterator as $key => $value) {
+            $result = $value->fromUrl($requestUrl);
+            if ($result) {
+                return;
+            }
+        }
     }
 
     public function run($maxForword = 10)
     {
-        while(true) {
+        while (true) {
             $isForword = \Dang\Mvc\To::instance()->isForword();
             if (!$isForword) {
                 break;

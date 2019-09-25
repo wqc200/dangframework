@@ -4,12 +4,13 @@ namespace Dang;
 
 class Helper
 {
-    private static $_holderNames = array();
+    private static $_holders = array();
+    private static $_routers = array();
 
     public static function isDevice($device)
     {
         $mobileDetect = new \Detection\MobileDetect();
-        if(preg_match("/$device/is", $mobileDetect->getUserAgent())){
+        if (preg_match("/$device/is", $mobileDetect->getUserAgent())) {
             return true;
         }
 
@@ -19,7 +20,7 @@ class Helper
     public static function isMobile()
     {
         $mobileDetect = new \Detection\MobileDetect();
-        if($mobileDetect->isMobile()){
+        if ($mobileDetect->isMobile()) {
             return true;
         }
 
@@ -29,24 +30,24 @@ class Helper
     public static function isTablet()
     {
         $mobileDetect = new \Detection\MobileDetect();
-        if($mobileDetect->isTablet()){
+        if ($mobileDetect->isTablet()) {
             return true;
         }
 
         return false;
     }
 
-    public static function url()
+    public static function serverUrl()
     {
         return \Dang\Logic\ServerUrl::instance();
     }
 
-    public static function holder($name):\Dang\Logic\Holder
+    public static function holder($name): \Dang\Logic\Holder
     {
-        if (!isset(self::$_holderNames[$name])) {
-            self::$_holderNames[$name] = new \Dang\Logic\Holder();
+        if (!isset(self::$_holders[$name])) {
+            self::$_holders[$name] = new \Dang\Logic\Holder();
         }
-        return self::$_holderNames[$name];
+        return self::$_holders[$name];
     }
 
     public static function tpl()
@@ -62,5 +63,28 @@ class Helper
     public static function val()
     {
         return \Dang\Logic\Val::instance();
+    }
+
+    public static function url($params = array(), $route = null)
+    {
+        if (!$route) {
+            $route = "dang_base";
+        }
+        $router = self::routeIterator()->getRouter($route);
+        $str = $router->toUrl($params);
+        return $str;
+    }
+
+    public static function routeIterator(): \Dang\Mvc\RouteIterator
+    {
+        return \Dang\Mvc\RouteIterator::instance();
+    }
+
+    public static function paginationControl(\Dang\Logic\Paginator $paginator, $filename, $requestParams, $route = null)
+    {
+        $pageParams = $paginator->getParams();
+        $params = array_merge($requestParams, $pageParams);
+
+        return self::tpl()->include($filename, $params);
     }
 }

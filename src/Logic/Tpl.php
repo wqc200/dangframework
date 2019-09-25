@@ -53,11 +53,15 @@ class Tpl
         return $this->_extension;
     }
 
-    public function include($file)
+    public function include($file, $variable = null)
     {
         $filename = (string)$this->getPath() . "/" . $file . "." . $this->getExtension();
         if (!file_exists($filename)) {
             throw new \Exception("tpl file: " . $filename . " not found!");
+        }
+
+        if ($variable != null) {
+            extract($variable);
         }
 
         include $filename;

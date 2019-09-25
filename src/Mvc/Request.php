@@ -7,7 +7,6 @@ class Request
     private static $_instance = null;
     private $_post = array();  //post里的参数
     private $_get = array();  //命令行下/和url里get里的参数都放在这里
-    private $_isConsole = 0;  //是否命令行，1是命令行,0非命令行
 
     /*
      * 单例模式入口
@@ -31,33 +30,29 @@ class Request
      */
     public function __construct()
     {
-        $_ddargv = array();
-
-        $argv = array();
-        if (isset($_SERVER['argv'])) {
-            $argv = $_SERVER['argv'];
-        }
-        if (!is_array($argv)) {
+        if (PHP_SAPI == "cli") {
             $argv = array();
-        }
-        if (count($argv) > 0) {
-            $this->_isConsole = 1;
-        }
-        if ($this->_isConsole == 1) {
+            if (isset($_SERVER['argv'])) {
+                $argv = $_SERVER['argv'];
+            }
+            if (!is_array($argv)) {
+                $argv = array();
+            }
             array_shift($argv);
             $queryString = join("&", $argv);
-            parse_str($queryString, $_ddargv);
-            $this->_get = $_ddargv;
+            $argv = array();
+            parse_str($queryString, $argv);
+            $this->_get = $argv;
         } else {
             $this->_get = $_GET;
+            $this->_post = $_POST;
         }
-        $this->_post = $_POST;
     }
 
     /*
      * 获取post参数，如果没有设置，则返回默认值
      */
-    public function getParamPost($name)
+    public function getPost($name)
     {
         if (isset($this->_post[$name])) {
             return $this->_post[$name];
@@ -70,7 +65,7 @@ class Request
      * 设置post参数值
      * 同时将修改同步到$clean_gp
      */
-    public function setParamPost($name, $value)
+    public function setPost($name, $value)
     {
         $this->_post[$name] = $value;
         return $this;
@@ -79,7 +74,7 @@ class Request
     /*
      * 检查post里的值是否设置
      */
-    public function issetParamPost($name)
+    public function issetPost($name)
     {
         if (isset($this->_post[$name])) {
             return true;
@@ -92,7 +87,7 @@ class Request
      * 命令行下参数：first=value&arr[]=foo+bar&arr[]=baz
      * 由于命令行下的参数传递和url query里的一样，所以将命令行下的参数也归入get里
      */
-    public function getParamQuery($name)
+    public function getQuery($name)
     {
         if (isset($this->_get[$name])) {
             return $this->_get[$name];
@@ -101,14 +96,14 @@ class Request
         return null;
     }
 
-    public function getParamQueries()
+    public function allQuery()
     {
         return $this->_get;
     }
 
     /*
      */
-    public function setParamQuery($name, $value)
+    public function setQuery($name, $value)
     {
         $this->_get[$name] = $value;
         return $this;
@@ -123,30 +118,11 @@ class Request
             return $this->_get[$name];
         }
 
-        if ($this->_isConsole == 1) {
-            return $default;
-        }
-
         if (isset($this->_post[$name])) {
             return $this->_post[$name];
         }
 
         return $default;
-    }
-
-    /*
-     */
-    public function setParam($name, $value)
-    {
-        if ($this->_isConsole == 0) {
-            if (isset($this->_post[$name])) {
-                $this->_post[$name] = $value;
-                return $this;
-            }
-        }
-
-        $this->_get[$name] = $value;
-        return $this;
     }
 
     /*

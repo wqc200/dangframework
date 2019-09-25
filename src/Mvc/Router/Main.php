@@ -30,9 +30,9 @@ class Main implements RouterInterface
     public function fromUrl($url):bool
     {
         if(preg_match("/^\/(index.php)?$/si", $url, $match)){
-            \Dang\Mvc\Request::instance()->setParamQuery("module", "www");
-            \Dang\Mvc\Request::instance()->setParamQuery("controller", "main");
-            \Dang\Mvc\Request::instance()->setParamQuery("action", "index");
+            \Dang\Mvc\Request::instance()->setQuery("module", "www");
+            \Dang\Mvc\Request::instance()->setQuery("controller", "main");
+            \Dang\Mvc\Request::instance()->setQuery("action", "index");
 
             return true;
         }
