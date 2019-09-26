@@ -38,15 +38,11 @@ class Enter
     public function run($maxForword = 10)
     {
         while (true) {
-            $isForword = \Dang\Mvc\To::instance()->isForword();
-            if (!$isForword) {
-                break;
-            }
-
-            $forwordTotal = \Dang\Mvc\To::instance()->forwordTotal();
+            $forwordTotal = \Dang\Mvc\To::instance()->getForwordTotal();
             if ($forwordTotal > $maxForword) {
                 break;
             }
+            \Dang\Mvc\To::instance()->resetForword();
 
             $module = \Dang\Mvc\To::instance()->getModule();
             $controller = \Dang\Mvc\To::instance()->getController();
@@ -58,6 +54,12 @@ class Enter
                 throw new \Exception("Action: " . $action . " not found in class " . $classer . "");
             }
             $controller->$action();
+
+            $isForword = \Dang\Mvc\To::instance()->isForword();
+            if (!$isForword) {
+                break;
+            }
+            \Dang\Mvc\To::instance()->increaseTotal();
         }
     }
 }

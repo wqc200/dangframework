@@ -8,8 +8,8 @@ class To
     private $_module;
     private $_controller;
     private $_action;
-    private $_isChanged = false;
-    private $_changeTotal;
+    private $_forword = false;
+    private $_total = 0;
 
     /*
      * 单例模式入口
@@ -34,23 +34,52 @@ class To
 
     public function isForword()
     {
-        return $this->_isChanged;
+        return $this->_forword;
     }
 
-    public function forwordTotal()
+    public function getForwordTotal()
     {
-        return $this->_changeTotal;
+        return $this->_total;
+    }
+
+    public function resetForword()
+    {
+        $this->_forword = false;
+        return $this;
+    }
+
+    public function increaseTotal()
+    {
+        $this->_total++;
+    }
+
+    public function forwordTo($module = null, $controller = null, $action = null)
+    {
+        $this->_forword = true;
+
+        if ($module != null) {
+            $this->setModule($module);
+        }
+
+        if ($controller != null) {
+            $this->setController($controller);
+        }
+
+        if ($action != null) {
+            $this->setAction($action);
+        }
+
+        return $this;
     }
 
     public function setModule($name)
     {
         if ($name == null) {
-            throw new \Exception("Mvc router error: module not found!");
+            throw new \Exception("Mvc router error: module can not be null!");
         }
 
         $name = \Dang\Mvc\Util::paramUrlToMvc($name);
         $this->_module = $name;
-        $this->_isChanged = true;
         return $this;
     }
 
@@ -62,7 +91,7 @@ class To
     public function setController($name)
     {
         if ($name == null) {
-            throw new \Exception("Mvc router error: controller not found!");
+            throw new \Exception("Mvc router error: controller can not be null!");
         }
 
         $name = \Dang\Mvc\Util::paramUrlToMvc($name);
@@ -79,7 +108,7 @@ class To
     public function setAction($name)
     {
         if ($name == null) {
-            throw new \Exception("Mvc router error: action not found!");
+            throw new \Exception("Mvc router error: action can not be null!");
         }
 
         $name = \Dang\Mvc\Util::paramUrlToMvc($name);

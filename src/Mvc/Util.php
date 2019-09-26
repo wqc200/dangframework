@@ -6,6 +6,10 @@ class Util
 {
     static function paramUrlToMvc($param)
     {
+        if ($param == null){
+            return $param;
+        }
+        
         /*
         $param = preg_replace("/[_-]([a-z]){1}/e",
              "strtoupper('\\1')",
