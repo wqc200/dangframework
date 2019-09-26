@@ -48,10 +48,10 @@ class Autoloader
         }
 
         //设置默认值
-        $path = "./libs/";
+        $path = "core";
         $extension = "php";
 
-        preg_match("/^[\\\]?([a-z]+)([\\\])/si", $className, $m);
+        preg_match("/^[\\\]?([a-z]+)[\\\]?/si", $className, $m);
         if($m){
             $namespace = strtolower($m[1]);
 
