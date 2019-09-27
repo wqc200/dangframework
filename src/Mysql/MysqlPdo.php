@@ -49,15 +49,16 @@ class MysqlPdo
 	{
 		reset($data);
         $space = $query_1 = $query_2 = '';
+        $param = array();
         foreach($data as $key=>$val)
         {
             $query_1 .= $space.$key;
-            $query_2 .= $space."'".$val."'";
+            $query_2 .= $space."?";
             $space=', ';
+            $param[] = $val;
         }
-        $query = $action.' INTO `' . $table . '` ('.$query_1.') VALUES ('.$query_2.')';
-
-        $this->prepareSql($query);
+        $sql = $action.' INTO `' . $table . '` ('.$query_1.') VALUES ('.$query_2.')';
+        $this->prepareSql($sql)->bindParam($param)->execute();
         return $this;
     }
 
