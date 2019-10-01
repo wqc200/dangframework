@@ -60,7 +60,7 @@ class MysqlPdo
                 $param[] = $val;
             }
         }
-        if (length($field) < 1) {
+        if (count($field) < 1) {
             return false;
         }
         $sql = $action . ' INTO `' . $table . '` (' . join(", ", $field) . ') VALUES (' . join(", ", $value) . ')';
@@ -82,7 +82,7 @@ class MysqlPdo
                 $param[] = $val;
             }
         }
-        if (length($field) < 1) {
+        if (count($field) < 1) {
             return false;
         }
         $sql .= join(", ", $field);
