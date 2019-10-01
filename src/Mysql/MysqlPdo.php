@@ -65,7 +65,7 @@ class MysqlPdo
         return $this;
     }
 
-    function prepareUpdate($table, $data, $where = '')
+    function prepareUpdate($table, $data, $condition)
     {
         $param = array();
 
