@@ -101,18 +101,6 @@ class MysqlPdo
         return true;
     }
 
-    function doUpdate()
-    {
-        $result = $this->execute();
-        $this->closeCursor();
-        return $result;
-    }
-
-    function doInsert()
-    {
-        return $this->doUpdate();
-    }
-
     function getOne()
     {
         $this->execute();
@@ -142,7 +130,7 @@ class MysqlPdo
         return $result;
     }
 
-    function closeDb()
+    function closeDB()
     {
         $this->_db = null;
     }
