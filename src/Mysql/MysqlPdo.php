@@ -60,9 +60,12 @@ class MysqlPdo
                 $param[] = $val;
             }
         }
+        if (length($field) < 1) {
+            return false;
+        }
         $sql = $action . ' INTO `' . $table . '` (' . join(", ", $field) . ') VALUES (' . join(", ", $value) . ')';
         $this->prepareSql($sql)->bindParam($param)->execute();
-        return $this;
+        return true;
     }
 
     function prepareUpdate($table, $data, $condition)
@@ -79,6 +82,9 @@ class MysqlPdo
                 $param[] = $val;
             }
         }
+        if (length($field) < 1) {
+            return false;
+        }
         $sql .= join(", ", $field);
 
         reset($condition);
@@ -92,7 +98,7 @@ class MysqlPdo
         }
 
         $this->prepareSql($sql)->bindParam($param)->execute();
-        return $this;
+        return true;
     }
 
     function doUpdate()
