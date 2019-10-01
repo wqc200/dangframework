@@ -4,13 +4,13 @@ namespace Dang\Mysql;
 
 Class SafePdo extends \PDO
 {
-	/*
-	 * 如果使用 throw new \Exception 会出现错误：Exception thrown without a stack frame in Unknown on line 0
-	 * 
-	 */
+    /*
+     * 如果使用 throw new \Exception 会出现错误：Exception thrown without a stack frame in Unknown on line 0
+     *
+     */
     public static function exception_handler($exception)
     {
-        die('Uncaught exception: '. $exception->getMessage());
+        die('Uncaught exception: ' . $exception->getMessage());
     }
 
     /*
@@ -18,15 +18,10 @@ Class SafePdo extends \PDO
      *
      * 参考：http://php.net/manual/zh/pdo.connections.php
      */
-    public function __construct($dsn, $username='', $password='', $driver_options=array())
+    public function __construct($dsn, $username = '', $password = '', $driver_options = array())
     {
         set_exception_handler(array(__CLASS__, 'exception_handler'));
-
         parent::__construct($dsn, $username, $password, $driver_options);
-
         restore_exception_handler();
     }
-
 }
-
-?>

@@ -8,14 +8,14 @@ class MysqlPdo
     protected $_stmt;
     protected $_param;
 
-    function __construct($dbname, $host, $port, $user, $passwd)
+    function __construct($dbname, $host, $port, $user, $passwd, $persistent = true)
     {
         $dsn = "mysql:dbname=" . $dbname . ";host=" . $host . ";port=" . $port;
 
         try {
             $db = new \Dang\Mysql\SafePdo($dsn, $user, $passwd, array(
                 \PDO::ATTR_TIMEOUT => 1,
-                \PDO::ATTR_PERSISTENT => true,
+                \PDO::ATTR_PERSISTENT => $persistent,
                 \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
             ));
             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
