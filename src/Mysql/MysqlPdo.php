@@ -8,14 +8,14 @@ class MysqlPdo
     protected $_stmt;
     protected $_param;
 
-    function __construct($dbname, $host, $port, $user, $passwd)
+    function __construct($dbname, $host, $port, $user, $passwd, $persistent = true)
     {
-        $dsn = "mysql:dbname=".$dbname.";host=".$host.";port=".$port;
+        $dsn = "mysql:dbname=" . $dbname . ";host=" . $host . ";port=" . $port;
 
         try {
             $db = new \Dang\Mysql\SafePdo($dsn, $user, $passwd, array(
                 \PDO::ATTR_TIMEOUT => 1,
-                \PDO::ATTR_PERSISTENT => true,
+                \PDO::ATTR_PERSISTENT => $persistent,
                 \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
             ));
             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
@@ -28,10 +28,10 @@ class MysqlPdo
     }
 
     function prepareSql($sql)
-	{
+    {
         $this->_stmt = $this->_db->prepare($sql);
         return $this;
-	}
+    }
 
     function execute()
     {
@@ -46,77 +46,83 @@ class MysqlPdo
     }
 
     function prepareInsert($table, $data, $action = "INSERT")
-	{
-		reset($data);
-        $space = $query_1 = $query_2 = '';
+    {
+        reset($data);
         $param = array();
-        foreach($data as $key=>$val)
-        {
-            $query_1 .= $space.$key;
-            $query_2 .= $space."?";
-            $space=', ';
+        $field = array();
+        $value = array();
+        foreach ($data as $key => $val) {
+            $field[] = "`" . $key . "`";
+            if ($val instanceof \Dang\Mysql\Expression) {
+                $value[] = $val->__toString();
+            } else {
+                $value[] = "?";
+                $param[] = $val;
+            }
+        }
+        if (count($field) < 1) {
+            return false;
+        }
+        $sql = $action . ' INTO `' . $table . '` (' . join(", ", $field) . ') VALUES (' . join(", ", $value) . ')';
+        $this->prepareSql($sql)->bindParam($param)->execute();
+        return true;
+    }
+
+    function prepareUpdate($table, $data, $condition)
+    {
+        $param = array();
+
+        $sql = 'UPDATE `' . $table . '` SET ';
+        $field = array();
+        foreach ($data as $key => $val) {
+            if ($val instanceof \Dang\Mysql\Expression) {
+                $field[] = "`" . $key . "` = " . $val->__toString();
+            } else {
+                $field[] = "`" . $key . "` = ?";
+                $param[] = $val;
+            }
+        }
+        if (count($field) < 1) {
+            return false;
+        }
+        $sql .= join(", ", $field);
+
+        reset($condition);
+        $where = array();
+        foreach ($condition as $key => $val) {
+            $where[] = "`" . $key . "` = ?";
             $param[] = $val;
         }
-        $sql = $action.' INTO `' . $table . '` ('.$query_1.') VALUES ('.$query_2.')';
+        if ($where) {
+            $sql .= ' WHERE ' . join("AND", $where) . '';
+        }
+
         $this->prepareSql($sql)->bindParam($param)->execute();
-        return $this;
+        return true;
     }
 
-    function prepareUpdate($table, $data, $where = '')
-	{
-        $query = 'UPDATE `' . $table . '` SET ';
-        $space='';
-        foreach($data as $key=>$val)
-        {
-            if($val instanceof \Dang\Mysql\Expression){
-                $query .= $space."`".$key. "` = ". $val->__toString();
-            }else{
-                $query .= $space.$key . "= '" . $val. "'";
-            }
-            $space=', ';
-        }
-        if($where){
-            $query .=' WHERE ' . $where.'';
-        }
-
-        $this->prepareSql($query);
-        return $this;
-    }
-
-    function doUpdate()
+    function getOne()
     {
-        $result = $this->execute();
-        $this->closeCursor();
+        $this->execute();
+        $result = $this->_stmt->fetchColumn();
         return $result;
     }
 
-    function doInsert()
+    function getRow()
     {
-        return $this->doUpdate();
-    }
-
-	function getOne()
-	{
-        $this->execute();
-        $result = $this->_stmt->fetchColumn();
-		return $result;
-	}
-
-	function getRow()
-	{
         $this->_stmt->setFetchMode(\PDO::FETCH_ASSOC);
         $this->execute();
-		$result = $this->_stmt->fetch();
-		return $result;
-	}
+        $result = $this->_stmt->fetch();
+        return $result;
+    }
 
     function getRowList()
-	{
+    {
         $this->_stmt->setFetchMode(\PDO::FETCH_ASSOC);
         $this->execute();
         $result = $this->_stmt->fetchAll();
-		return $result;
-	}
+        return $result;
+    }
 
     function getLastInsertId()
     {
@@ -124,7 +130,7 @@ class MysqlPdo
         return $result;
     }
 
-    function closeDb()
+    function closeDB()
     {
         $this->_db = null;
     }

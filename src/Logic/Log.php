@@ -28,14 +28,14 @@ class Log
             mkdir($rootDir, 0777);
         }
 
-        $dir = $rootDir . $dirName;
+        $dir = $rootDir . $dirName . DIRECTORY_SEPARATOR;
         if (!is_readable($dir)) {
             mkdir($dir, 0777);
         }
 
         $today = date("Y-m-d");
 
-        $filename = $dir . DIRECTORY_SEPARATOR . $today . ".log";
+        $filename = $dir . $today . ".log";
         if (!is_file($filename)) {
             touch($filename);
         }
