@@ -68,7 +68,7 @@ class Helper
     public static function url($params = array(), $route = null)
     {
         if (!$route) {
-            $route = "dang_base";
+            $route = self::routeIterator()->getDefault();
         }
         $router = self::routeIterator()->getRouter($route);
         $str = $router->toUrl($params);

@@ -4,28 +4,14 @@ namespace Dang\Logic;
 
 class Paginator
 {
-    /*
-     * 每页默认显示的item个数
-     */
-    protected static $defaultItemCountPerPage = 10;
-    /*
-     * 总页数
-     */
-    protected $pageCount = null;
-    /*
-     * 充许最大展示的页数
-     */
-    protected $maxPageCount = 100;
-    /*
-     * 当前页
-     */
-    protected $currentPageNumber = 1;
-
-    protected $totalItemCount;
-
+    protected $_number = 12;
+    protected $_pageTotal;
+    protected $_maxPage = 100;
+    protected $_current = 1;
+    protected $_itemTotal;
     protected $_filename;
     protected $_route = null;
-
+    protected $_query;
 
     public function __construct()
     {
@@ -53,85 +39,79 @@ class Paginator
         return $this;
     }
 
-    public function setQuery($requestParam)
+    public function setQuery($query)
     {
-        $this->_requestParam = $requestParam;
+        $this->_query = $query;
         return $this;
     }
 
-    public function getTotalItemCount()
+    public function getItemTotal()
     {
-        return $this->totalItemCount;
+        return $this->_itemTotal;
     }
 
-    public function setTotal($totalItemCount)
+    public function setItemTotal($totalItemCount)
     {
-        $this->totalItemCount = $totalItemCount;
+        $this->_itemTotal = $totalItemCount;
         return $this;
     }
 
-    public function getItemCountPerPage()
+    public function getNumber()
     {
-        if (empty($this->itemCountPerPage)) {
-            $this->itemCountPerPage = self::$defaultItemCountPerPage;
+        return $this->_number;
+    }
+
+    public function setNumber($number = -1)
+    {
+        $this->_number = (integer)$number;
+        if ($this->_number < 1) {
+            $this->_number = $this->getItemTotal();
         }
-
-        return $this->itemCountPerPage;
-    }
-
-    public function setItemCountPerPage($itemCountPerPage = -1)
-    {
-        $this->itemCountPerPage = (integer)$itemCountPerPage;
-        if ($this->itemCountPerPage < 1) {
-            $this->itemCountPerPage = $this->getTotalItemCount();
-        }
-
         return $this;
     }
 
-    public function setMaxPageCount($pageCount)
+    public function setMaxPage($maxPage)
     {
-        $this->maxPageCount = $pageCount;
+        $this->_maxPage = $maxPage;
         return $this;
     }
 
     public function getOffset()
     {
-        $nummber = $this->getItemCountPerPage();
-        $offset = ($this->getCurrentPageNumber() - 1) * $nummber;
+        $nummber = $this->getNumber();
+        $offset = ($this->getCurrent() - 1) * $nummber;
         return $offset;
     }
 
     public function getPageTotal()
     {
-        if (!$this->pageCount) {
-            $this->pageCount = (integer)ceil($this->getTotalItemCount() / $this->getItemCountPerPage());
+        if (!$this->_pageTotal) {
+            $this->_pageTotal = (integer)ceil($this->getItemTotal() / $this->getNumber());
         }
-        if ($this->maxPageCount && $this->maxPageCount < $this->pageCount) {
-            $this->pageCount = $this->maxPageCount;
+        if ($this->_maxPage && $this->_maxPage < $this->_pageTotal) {
+            $this->_pageTotal = $this->_maxPage;
         }
 
-        return $this->pageCount;
+        return $this->_pageTotal;
     }
 
     public function getParams()
     {
         $pageCount = $this->getPageTotal();
-        $currentPageNumber = $this->getCurrentPageNumber();
+        $current = $this->getCurrent();
 
         $first = 1;
-        $current = $currentPageNumber;
         $last = $pageCount;
 
         // Previous and next
-        if ($currentPageNumber - 1 > 0) {
-            $previous = $currentPageNumber - 1;
+        if ($current - 1 > 0) {
+            $previous = $current - 1;
         } else {
             $previous = 0;
         }
 
-        if ($currentPageNumber + 1 <= $pageCount) {
-            $next = $currentPageNumber + 1;
+        if ($current + 1 <= $pageCount) {
+            $next = $current + 1;
         } else {
             $next = 0;
         }
@@ -143,11 +123,11 @@ class Paginator
             "previous" => $previous,
             "last" => $last,
             "route" => $this->_route,
-            "requestQuery" => $this->_requestParam,
+            "query" => $this->_query,
         );
     }
 
-    public function normalizePageNumber($pageNumber)
+    private function _normalizePageNumber($pageNumber)
     {
         $pageNumber = (integer)$pageNumber;
 
@@ -164,14 +144,14 @@ class Paginator
         return $pageNumber;
     }
 
-    public function getCurrentPageNumber()
+    public function getCurrent()
     {
-        return $this->normalizePageNumber($this->currentPageNumber);
+        return $this->_normalizePageNumber($this->_current);
     }
 
     public function setCurrent($pageNumber)
     {
-        $this->currentPageNumber = (integer)$pageNumber;
+        $this->_current = (integer)$pageNumber;
         return $this;
     }
 }
