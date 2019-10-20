@@ -11,6 +11,17 @@ class Holder
         $this->_items = array();
     }
 
+    public function start()
+    {
+        ob_start();
+    }
+
+    public function end()
+    {
+        $content = ob_get_clean();
+        $this->append($content);
+    }
+
     public function append($content)
     {
         $this->_items[] = $content;
