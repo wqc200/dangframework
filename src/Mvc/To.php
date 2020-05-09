@@ -42,20 +42,16 @@ class To
         return $this->_total;
     }
 
-    public function resetForword()
+    public function unForword()
     {
         $this->_forword = false;
         return $this;
     }
 
-    public function increaseTotal()
-    {
-        $this->_total++;
-    }
-
     public function forwordTo($module = null, $controller = null, $action = null)
     {
         $this->_forword = true;
+        $this->_total++;
 
         if ($module != null) {
             $this->setModule($module);
@@ -68,8 +64,6 @@ class To
         if ($action != null) {
             $this->setAction($action);
         }
-
-        return $this;
     }
 
     public function setModule($name)

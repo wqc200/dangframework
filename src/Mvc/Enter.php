@@ -10,7 +10,10 @@ class Enter
         \Dang\Helper::routeIterator()->addRouter("dang_base", new \Dang\Mvc\Router\Base());
 
         if (PHP_SAPI != 'cli') {
-            $this->_parseUrl();
+            $result = $this->parseUrl();
+            if (!$result) {
+                return;
+            }
         }
 
         $module = \Dang\Mvc\Request::instance()->getQuery("module");
@@ -23,16 +26,21 @@ class Enter
         \Dang\Mvc\To::instance()->setAction($action);
     }
 
-    public function _parseUrl()
+    private function parseUrl()
     {
         $requestUrl = $_SERVER['REQUEST_URI'];
         $routerIterator = \Dang\Helper::RouteIterator();
         foreach ($routerIterator as $key => $value) {
+            if ($key == "dang_main") {
+                continue;
+            }
             $result = $value->fromUrl($requestUrl);
             if ($result) {
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 
     public function run($maxForword = 10)
@@ -42,25 +50,33 @@ class Enter
             if ($forwordTotal > $maxForword) {
                 break;
             }
-            \Dang\Mvc\To::instance()->resetForword();
 
-            $module = \Dang\Mvc\To::instance()->getModule();
-            $controller = \Dang\Mvc\To::instance()->getController();
-            $action = \Dang\Mvc\To::instance()->getAction();
-
-            $classer = "\Controller\\" . $module . "\\" . $controller;
-            $controller = new $classer();
-            if (!method_exists($controller, $action)) {
-                throw new \Exception("Action: " . $action . " not found in class " . $classer . "");
-            }
-            $controller->$action();
+            $this->runController();
 
             $isForword = \Dang\Mvc\To::instance()->isForword();
             if (!$isForword) {
                 break;
             }
-            \Dang\Mvc\To::instance()->increaseTotal();
+            \Dang\Mvc\To::instance()->unForword();
         }
+    }
+
+    public function runController()
+    {
+        $module = \Dang\Mvc\To::instance()->getModule();
+        $controller = \Dang\Mvc\To::instance()->getController();
+        $action = \Dang\Mvc\To::instance()->getAction();
+
+        $classer = "\Controller\\" . $module . "\\" . $controller;
+        $controller = new $classer();
+        $isForword = \Dang\Mvc\To::instance()->isForword();
+        if ($isForword) {
+            return;
+        }
+        if (!method_exists($controller, $action)) {
+            throw new \Exception("Action: " . $action . " not found in class " . $classer . "");
+        }
+        $controller->$action();
     }
 }
 

@@ -5,6 +5,7 @@ namespace Dang\Logic;
 class Tpl
 {
     protected static $_instance = null;
+    protected $_vars;
     protected $_path;
     protected $_extension;
 
@@ -53,9 +54,20 @@ class Tpl
         return $this->_extension;
     }
 
+    public function partial($file, $variable = null)
+    {
+        $render = new \Dang\Logic\Partial();
+        $render->render($file, $variable);
+    }
+
     public function include($file, $variable = null)
     {
-        $filename = (string)$this->getPath() . "/" . $file . "." . $this->getExtension();
+        if (substr($file, 0, 1) == DIRECTORY_SEPARATOR) {
+            $filename = $file . "." . $this->getExtension();
+        } else {
+            $filename = (string)$this->getPath() . "/" . $file . "." . $this->getExtension();
+        }
+
         if (!file_exists($filename)) {
             throw new \Exception("tpl file: " . $filename . " not found!");
         }

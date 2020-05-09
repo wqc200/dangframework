@@ -5,35 +5,58 @@ namespace Dang\Logic;
 
 class Result
 {
-    private $_errorCode;
-    private $_message;
-    private $_data;
+    public $errorCode;
+    public $message;
+    public $data;
+    private $_callback;
 
     function __construct()
     {
     }
 
+    function __toString()
+    {
+        $result = json_encode($this, JSON_UNESCAPED_UNICODE);
+        if ($this->getCallback()) {
+            return $this->getCallback() . "(" . $result . ")";
+        } else {
+            return $result;
+        }
+    }
+
     function setErrorCode($errorCode = 0){
-        $this->_errorCode = $errorCode;
+        $this->errorCode = $errorCode;
+        return $this;
     }
 
     function getErrorCode(){
-        return $this->_errorCode;
+        return $this->errorCode;
     }
 
     function setMessage($message = null){
-        $this->_message = $message;
+        $this->message = $message;
+        return $this;
     }
 
     function getMessage(){
-        return $this->_message;
+        return $this->message;
     }
 
-    function setData($data){
-        $this->_data = $data;
+    function setData($data = null){
+        $this->data = $data;
+        return $this;
     }
 
     function getData(){
-        return $this->_data;
+        return $this->data;
+    }
+
+    function setCallback($callback = null){
+        $this->_callback = $callback;
+        return $this;
+    }
+
+    function getCallback(){
+        return $this->_callback;
     }
 }

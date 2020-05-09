@@ -7,6 +7,17 @@ class Helper
     private static $_holders = array();
     private static $_routers = array();
 
+    public static function result()
+    {
+        $result = new \Dang\Logic\Result();
+        return $result;
+    }
+
+    public static function forwordTo($module = null, $controller = null, $action = null)
+    {
+        \Dang\Mvc\To::instance()->forwordTo($module, $controller, $action);
+    }
+
     public static function isDevice($device)
     {
         $mobileDetect = new \Detection\MobileDetect();

@@ -4,6 +4,7 @@ namespace Dang\Logic;
 
 class Holder
 {
+    private $_joner;
     private $_items;
 
     function __construct()
@@ -34,8 +35,14 @@ class Holder
         return $this;
     }
 
+    public function joiner($joner)
+    {
+        $this->_joner = $joner;
+        return $this;
+    }
+
     public function __toString()
     {
-        return join("\n", $this->_items);
+        return join($this->_joner, $this->_items);
     }
 }

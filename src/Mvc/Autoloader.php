@@ -4,8 +4,8 @@ namespace Dang\Mvc;
 
 class Autoloader
 {
-    private $_path = array();
-    private $_extension = array();
+    private $_namespacePath = array();
+    private $_defaultPath = array();
 
     public function register()
     {
@@ -23,18 +23,15 @@ class Autoloader
      * @param $namespace 命名空间
      * @path 路径
      */
-    public function add($namespace, $path)
+    public function namespacePath($namespace, $path)
     {
-        $this->_path[strtolower($namespace)] = $path;
+        $this->_namespacePath[strtolower($namespace)] = $path;
         return $this;
     }
 
-    /*
-     * 添加特定类的扩展名
-     */
-    public function ext($namespace, $ext)
+    public function defaultPath($path)
     {
-        $this->_extension[strtolower($namespace)] = $ext;
+        $this->_defaultPath = $path;
         return $this;
     }
 
@@ -48,27 +45,21 @@ class Autoloader
         }
 
         //设置默认值
-        $path = "core";
-        $extension = "php";
+        $path = $this->_defaultPath;
 
         preg_match("/^[\\\]?([a-z]+)[\\\]?/si", $className, $m);
-        if($m){
+        if ($m) {
             $namespace = strtolower($m[1]);
 
             //查看定义的namespace 和 path
-            if(key_exists($namespace, $this->_path)){
-                $path = $this->_path[$namespace];
-            }
-
-            //查看定义的namespace 和 entension
-            if(key_exists($namespace, $this->_extension)){
-                $extension = $this->_extension[$namespace];
+            if (key_exists($namespace, $this->_namespacePath)) {
+                $path = $this->_namespacePath[$namespace];
             }
         }
 
-        $filename = realpath($path)."/". preg_replace('/[\\\]/', DIRECTORY_SEPARATOR, $className) . '.'. $extension;
-        if(!file_exists($filename)){
-        	return false;
+        $filename = realpath($path) . "/" . preg_replace('/[\\\]/', DIRECTORY_SEPARATOR, $className) . '.php';
+        if (!file_exists($filename)) {
+            return false;
         }
 
         return include $filename;
